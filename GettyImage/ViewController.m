@@ -21,6 +21,49 @@
 
 @synthesize searchTextField;
 
+
+
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+	_previousTextFieldContent = textField.text;
+	_previousSelection = textField.selectedTextRange;
+	
+	return YES;
+}
+
+- (NSString *)removeNonAlpha:(NSString *)string andPreserveCursorPosition:(NSUInteger *)cursorPosition
+{
+	NSUInteger originalCursorPosition = *cursorPosition;
+	NSMutableString *alphaOnlyString = [NSMutableString new];
+	for (NSUInteger i=0; i<[string length]; i++) {
+		unichar characterToAdd = [string characterAtIndex:i];
+		if (isalpha(characterToAdd)) {
+			NSString *stringToAdd =[NSString stringWithCharacters:&characterToAdd length:1];
+			[alphaOnlyString appendString:stringToAdd];
+		}
+		else {
+			if (i < originalCursorPosition) {
+				(*cursorPosition)--;
+			}
+		}
+	}
+	
+	return alphaOnlyString;
+}
+
+-(void)reformatAsAlphaOnly:(UITextField *)textField
+{
+	NSUInteger targetCursorPosition = [textField offsetFromPosition:textField.beginningOfDocument toPosition:textField.selectedTextRange.start];
+	
+	NSString *searchWithoutSpaces = [self removeNonAlpha:textField.text andPreserveCursorPosition:&targetCursorPosition];
+	
+	
+	textField.text = searchWithoutSpaces;
+	UITextPosition *targetPosition = [textField positionFromPosition:[textField beginningOfDocument] offset:targetCursorPosition];
+	
+	[textField setSelectedTextRange: [textField textRangeFromPosition:targetPosition toPosition:targetPosition]];
+}
+
 - (void)searchButtonNormal:(UIButton *)sender
 {
 //	self.resultViewController = [[ResultViewController alloc] init];
@@ -82,6 +125,7 @@
 	[searchTextField setReturnKeyType:UIReturnKeySearch];
 	searchTextField.clearButtonMode = UITextFieldViewModeWhileEditing;
 	searchTextField.placeholder = @"Image";
+	[searchTextField addTarget:self action:@selector(reformatAsAlphaOnly:) forControlEvents:UIControlEventEditingChanged];
 	
 	UIButton * searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
 	[searchButton setTitle:@"Search" forState:UIControlStateNormal];
