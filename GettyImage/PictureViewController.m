@@ -62,22 +62,40 @@
 	NSInteger row = [indexPath row];
 	static NSString *CellIdentifier = @"ListingIdentifier";
 	UITableViewCell *cell = [aTableView dequeueReusableCellWithIdentifier:CellIdentifier];
+	UIView * panel = nil;
 	if (cell == nil) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-		cell.textLabel.textAlignment = NSTextAlignmentCenter;
-		cell.textLabel.numberOfLines = 0;
+//		cell.textLabel.textAlignment = NSTextAlignmentCenter;
+//		cell.textLabel.numberOfLines = 0;
 		
-		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];
-		cell.textLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-		cell.textLabel.textColor = [UIColor colorWithRed:108.0/255.0 green:110.0/255.0 blue:110.0/255.0 alpha:1.0];
+//		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];
+//		cell.textLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
+//		cell.textLabel.textColor = [UIColor colorWithRed:108.0/255.0 green:110.0/255.0 blue:110.0/255.0 alpha:1.0];
+		
+		
+		cell.backgroundView.backgroundColor = [UIColor whiteColor];
+		
+		panel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+		
+//		panel.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.2/255.0 alpha:0.90];
+		//        panel.layer.shadowColor = [UIColor grayColor].CGColor;
+		//        panel.layer.shadowOffset = CGSizeMake(0.0f, 1.0f);
+		panel.layer.masksToBounds = NO;
+		//        panel.layer.shadowOpacity = 0.5;
+		panel.tag = 10;
+		
+		[cell.contentView addSubview:panel];
 		
 	}
-//	if ([[[[dataArray objectAtIndex:row] objectForKey:@"question"] objectForKey:@"body"]  isEqual: @""]) {
-//		cell.textLabel.text = @"No question body provided.";
-//	}
-//	else{
-//		cell.textLabel.text = [[[dataArray objectAtIndex:row] objectForKey:@"question"] objectForKey:@"body"];
-//	}
+	else{
+		panel = [cell.contentView viewWithTag:10];
+		NSArray *viewsToRemove = [panel subviews];
+		for (UIView *v in viewsToRemove) {
+			[v removeFromSuperview];
+		}
+	}
+	
+//	UIImageView * imgView = [UIImageView alloc] initWithImage:<#(nullable UIImage *)#>
 	return cell;
 }
 
