@@ -22,14 +22,14 @@
 @synthesize searchTextField;
 
 
-
--(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-	_previousTextFieldContent = textField.text;
-	_previousSelection = textField.selectedTextRange;
-	
-	return YES;
-}
+//
+//-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+//{
+//	_previousTextFieldContent = textField.text;
+//	_previousSelection = textField.selectedTextRange;
+//	
+//	return YES;
+//}
 
 - (NSString *)removeNonAlpha:(NSString *)string andPreserveCursorPosition:(NSUInteger *)cursorPosition
 {
@@ -66,9 +66,16 @@
 
 - (void)searchButtonNormal:(UIButton *)sender
 {
-//	self.resultViewController = [[ResultViewController alloc] init];
-//	self.resultViewController.acronym = searchTextField.text;
-//	[self presentViewController:self.resultViewController animated:YES completion:nil];
+	self.pictureViewController = [[PictureViewController alloc] init];
+	[NetworkAccess accessServer:searchTextField.text success:^(NSURLSessionTask *task, NSArray *responseObject){
+		self.pictureViewController.data = responseObject;
+		NSLog(@"LOL %@", responseObject);
+	} failure:^(NSURLSessionTask *operation, NSError *error){
+		NSLog(@"FAIL %@", error);
+	}];
+	self.pictureViewController.title = searchTextField.text;
+	[self presentViewController:self.pictureViewController animated:YES completion:nil];
+	
 	
 }
 
@@ -147,11 +154,7 @@
 	self.view.userInteractionEnabled = YES;
 
 	
-	[NetworkAccess accessServer:@"puppy" success:^(NSURLSessionTask *task, NSArray *responseObject){
-		NSLog(@"%@", responseObject);
-	} failure:^(NSURLSessionTask *operation, NSError *error){
-		NSLog(@"FAIL %@", error);
-	}];
+	
 }
 
 - (void)didReceiveMemoryWarning {

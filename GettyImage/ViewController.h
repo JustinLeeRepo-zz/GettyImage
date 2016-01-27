@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PictureViewController.h"
 
 @interface ViewController : UIViewController<UITextFieldDelegate>
 
-@property (nonatomic, strong) NSString *previousTextFieldContent;
-@property (nonatomic, strong) UITextRange *previousSelection;
+//@property (nonatomic, strong) NSString *previousTextFieldContent;
+//@property (nonatomic, strong) UITextRange *previousSelection;
+@property (nonatomic, strong) PictureViewController *pictureViewController;
 
 @end

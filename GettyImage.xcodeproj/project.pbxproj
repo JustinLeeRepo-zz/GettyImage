@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D00CE6401C58518200569193 /* PictureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D00CE63F1C58518200569193 /* PictureViewController.m */; };
+		D00CE6431C58607800569193 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = D00CE6421C58607800569193 /* back.png */; };
 		D06A02B71C58181500468F6D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D06A02B61C58181500468F6D /* main.m */; };
 		D06A02BA1C58181500468F6D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D06A02B91C58181500468F6D /* AppDelegate.m */; };
 		D06A02C21C58181500468F6D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D06A02C11C58181500468F6D /* Assets.xcassets */; };
@@ -21,6 +23,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D00CE63F1C58518200569193 /* PictureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PictureViewController.m; sourceTree = "<group>"; };
+		D00CE6411C58519500569193 /* PictureViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PictureViewController.h; sourceTree = "<group>"; };
+		D00CE6421C58607800569193 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
 		D06A02B21C58181500468F6D /* GettyImage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GettyImage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D06A02B61C58181500468F6D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D06A02B81C58181500468F6D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -81,8 +86,11 @@
 				D06A02B91C58181500468F6D /* AppDelegate.m */,
 				D06A02CC1C58189200468F6D /* ViewController.h */,
 				D06A02CD1C58189200468F6D /* ViewController.m */,
+				D00CE63F1C58518200569193 /* PictureViewController.m */,
+				D00CE6411C58519500569193 /* PictureViewController.h */,
 				D06A02E31C5819E200468F6D /* NetworkAccess.m */,
 				D06A02E51C5819F100468F6D /* NetworkAccess.h */,
+				D00CE6421C58607800569193 /* back.png */,
 				D06A02C11C58181500468F6D /* Assets.xcassets */,
 				D06A02C61C58181500468F6D /* Info.plist */,
 				D06A02B51C58181500468F6D /* Supporting Files */,
@@ -175,6 +183,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D00CE6431C58607800569193 /* back.png in Resources */,
 				D06A02C21C58181500468F6D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -196,6 +205,7 @@
 				D06A02E01C5819B000468F6D /* AFURLRequestSerialization.m in Sources */,
 				D06A02E11C5819B000468F6D /* AFURLResponseSerialization.m in Sources */,
 				D06A02DD1C5819B000468F6D /* AFHTTPSessionManager.m in Sources */,
+				D00CE6401C58518200569193 /* PictureViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +335,7 @@
 				D06A02CB1C58181500468F6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
