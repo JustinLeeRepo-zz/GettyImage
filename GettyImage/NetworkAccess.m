@@ -16,7 +16,7 @@
 
 + (void) accessServer:(NSString *)search success:(void (^)(NSURLSessionTask *task, NSArray * responseObject))success failure:(void (^)(NSURLSessionTask *operation, NSError *error))failure
 {
-	NSString *baseUrl = @"https://api.gettyimages.com/v3/search/images?fields=id,title,thumb,referral_destinations&sort_order=best&phrase=";
+	NSString *baseUrl = @"https://api.gettyimages.com/v3/search/images?fields=id,title,thumb,comp,preview,referral_destinations&sort_order=best&phrase=";
 	
 	NSString *urlString = [NSString stringWithFormat:@"%@%@", baseUrl, search];
 	

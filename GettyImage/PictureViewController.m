@@ -9,7 +9,12 @@
 #import "PictureViewController.h"
 
 
-@interface PictureViewController()
+@interface PictureViewController() {
+	BOOL isFullScreen;
+	CGRect prevFrame;
+	UIImageView *fullview;
+	UIImageView *temptumb;
+}
 
 @property (nonatomic,retain) UITableView * tableView;
 @property (nonatomic,retain) UILabel * headerLabel;
@@ -20,6 +25,7 @@
 
 @synthesize headerLabel;
 
+
 - (void)backButtonNormal:(UIButton *)sender
 {
 	//self.backButton.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:102.0/255.0 blue:102.2/255.0 alpha:0.9];
@@ -28,6 +34,58 @@
 {
 	//self.backButton.backgroundColor = [UIColor colorWithRed:255.0/255.0 green:71.0/255.0 blue:71.2/255.0 alpha:0.9];
 	[self dismissViewControllerAnimated:YES completion:nil];
+}
+
+//This will create a temporary imaget view and animate it to fullscreen
+- (void)bannerTapped:(UIGestureRecognizer *)gestureRecognizer {
+//	NSLog(@"%@", [gestureRecognizer view]);
+	//create new image
+	temptumb=(UIImageView *)gestureRecognizer.view;
+	
+	//fullview is gloabal, So we can acess any time to remove it
+	fullview=[[UIImageView alloc]init];
+	[fullview setContentMode:UIViewContentModeScaleAspectFit];
+	[fullview setBackgroundColor:[UIColor blackColor]];
+	fullview.image = [(UIImageView *)gestureRecognizer.view image];
+	CGRect point=[self.view convertRect:gestureRecognizer.view.bounds fromView:gestureRecognizer.view];
+	[fullview setFrame:point];
+	
+	[self.view addSubview:fullview];
+	[UIView animateWithDuration:0.5
+					 animations:^{
+						 [fullview setFrame:CGRectMake(0,
+													   0,
+													   self.view.bounds.size.width,
+													   self.view.bounds.size.height)];
+					 }];
+	UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(fullimagetapped:)];
+	singleTap.numberOfTapsRequired = 1;
+	singleTap.numberOfTouchesRequired = 1;
+	[fullview addGestureRecognizer:singleTap];
+	[fullview setUserInteractionEnabled:YES];
+}
+
+//This will remove the full screen and back to original location.
+
+- (void)fullimagetapped:(UIGestureRecognizer *)gestureRecognizer {
+	
+	CGRect point=[self.view convertRect:temptumb.bounds fromView:temptumb];
+	
+	gestureRecognizer.view.backgroundColor=[UIColor clearColor];
+	[UIView animateWithDuration:0.5
+					 animations:^{
+						 [(UIImageView *)gestureRecognizer.view setFrame:point];
+					 }];
+	[self performSelector:@selector(animationDone:) withObject:[gestureRecognizer view] afterDelay:0.4];
+	
+}
+
+//Remove view after animation of remove
+-(void)animationDone:(UIView  *)view
+{
+	//view.backgroundColor=[UIColor clearColor];
+	[fullview removeFromSuperview];
+	fullview=nil;
 }
 
 - (void)initTableView
@@ -44,17 +102,12 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	return [[self.data objectForKey:@"result_count"] intValue];
+	return [[self.data objectForKey:@"images"] count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	return 44;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-//	[self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+	return 200;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)aTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -65,27 +118,13 @@
 	UIView * panel = nil;
 	if (cell == nil) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-//		cell.textLabel.textAlignment = NSTextAlignmentCenter;
-//		cell.textLabel.numberOfLines = 0;
-		
-//		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];
-//		cell.textLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
-//		cell.textLabel.textColor = [UIColor colorWithRed:108.0/255.0 green:110.0/255.0 blue:110.0/255.0 alpha:1.0];
-		
-		
 		cell.backgroundView.backgroundColor = [UIColor whiteColor];
 		
-		panel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-		
-//		panel.backgroundColor = [UIColor colorWithRed:245.0/255.0 green:245.0/255.0 blue:245.2/255.0 alpha:0.90];
-		//        panel.layer.shadowColor = [UIColor grayColor].CGColor;
-		//        panel.layer.shadowOffset = CGSizeMake(0.0f, 1.0f);
+		panel = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 200)];
 		panel.layer.masksToBounds = NO;
-		//        panel.layer.shadowOpacity = 0.5;
 		panel.tag = 10;
 		
 		[cell.contentView addSubview:panel];
-		
 	}
 	else{
 		panel = [cell.contentView viewWithTag:10];
@@ -95,12 +134,32 @@
 		}
 	}
 	
-//	UIImageView * imgView = [UIImageView alloc] initWithImage:<#(nullable UIImage *)#>
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+		NSString *path =[[[[[self.data objectForKey:@"images"] objectAtIndex:row] objectForKey:@"display_sizes"] objectAtIndex:0] objectForKey:@"uri"];
+		NSURL *url = [NSURL URLWithString:path];
+		NSData *data = [NSData dataWithContentsOfURL:url];
+		
+		dispatch_async(dispatch_get_main_queue(), ^{
+			UIImage *img = [[UIImage alloc] initWithData:data];
+			UIImageView *imgView2 = [[UIImageView alloc] initWithImage:img];
+			[imgView2 setFrame:CGRectMake(0, 0, panel.frame.size.width, 200)];
+			imgView2.contentMode = UIViewContentModeScaleToFill;
+			imgView2.clipsToBounds = YES;
+			[panel addSubview:imgView2];
+			
+			UITapGestureRecognizer *tapPic = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(bannerTapped:)];
+			[imgView2 setUserInteractionEnabled:YES];
+			[imgView2 addGestureRecognizer:tapPic];
+		});
+	});
+
 	return cell;
 }
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
+	
+	isFullScreen = false;
 	
 	self.view.backgroundColor = [UIColor colorWithRed:181.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1.0];
 	
@@ -128,6 +187,9 @@
 	[headerView addSubview:headerLine];
 	[self.view addSubview:headerView];
 
+	[self initTableView];
+	NSLog(@"%lu", [[self.data objectForKey:@"images"] count]);
+	NSLog(@"%d", [[self.data objectForKey:@"result_count"] intValue]);
 }
 
 - (void)didReceiveMemoryWarning {

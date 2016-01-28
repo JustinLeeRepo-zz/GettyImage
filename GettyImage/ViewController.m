@@ -14,22 +14,24 @@
 }
 
 @property (nonatomic,retain) UITextField * searchTextField;
+@property (nonatomic,retain) UITextChecker *checker;
 
 @end
 
 @implementation ViewController
 
 @synthesize searchTextField;
+@synthesize checker;
 
 
-//
-//-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-//{
-//	_previousTextFieldContent = textField.text;
-//	_previousSelection = textField.selectedTextRange;
-//	
-//	return YES;
-//}
+-(BOOL)isDictionaryWord:(NSString*)word {
+	checker = [[UITextChecker alloc] init];
+//	NSLocale *currentLocale = [NSLocale currentLocale];
+//	NSString *currentLanguage = [currentLocale objectForKey:NSLocaleLanguageCode];
+	NSRange searchRange = NSMakeRange(0, [word length]);
+	NSRange misspelledRange = [checker rangeOfMisspelledWordInString:word range: searchRange startingAt:0 wrap:NO language: @"en" ];
+	return misspelledRange.location == NSNotFound;
+}
 
 - (NSString *)removeNonAlpha:(NSString *)string andPreserveCursorPosition:(NSUInteger *)cursorPosition
 {
@@ -66,17 +68,24 @@
 
 - (void)searchButtonNormal:(UIButton *)sender
 {
+	
+//	NSLog([self isDictionaryWord:searchTextField.text] ? @"Yes" : @"No");
+	if(![self isDictionaryWord:searchTextField.text]){
+//		NSLog(@"NOTREAL");
+		NSArray * guesses = [checker guessesForWordRange:NSMakeRange(0, [searchTextField.text length]) inString:searchTextField.text language:@"en"];
+		searchTextField.text = [guesses count] > 0 ? [guesses objectAtIndex:0] : searchTextField.text;
+		
+	}
 	self.pictureViewController = [[PictureViewController alloc] init];
 	[NetworkAccess accessServer:searchTextField.text success:^(NSURLSessionTask *task, NSArray *responseObject){
-		self.pictureViewController.data = responseObject;
-		NSLog(@"LOL %@", responseObject);
+		self.pictureViewController.data = (NSDictionary *)responseObject;
+//		NSLog(@"LOL %@", self.pictureViewController.data);
+		self.pictureViewController.title = searchTextField.text;
+		[self presentViewController:self.pictureViewController animated:YES completion:nil];
 	} failure:^(NSURLSessionTask *operation, NSError *error){
 		NSLog(@"FAIL %@", error);
+		return;
 	}];
-	self.pictureViewController.title = searchTextField.text;
-	[self presentViewController:self.pictureViewController animated:YES completion:nil];
-	
-	
 }
 
 - (void)searchTouchDown:(UIButton *)sender
