@@ -188,8 +188,6 @@
 	[self.view addSubview:headerView];
 
 	[self initTableView];
-	NSLog(@"%lu", [[self.data objectForKey:@"images"] count]);
-	NSLog(@"%d", [[self.data objectForKey:@"result_count"] intValue]);
 }
 
 - (void)didReceiveMemoryWarning {
